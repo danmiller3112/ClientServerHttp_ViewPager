@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.frag_container, new LoginFrag(), "LOGIN");
         transaction.commit();
     }

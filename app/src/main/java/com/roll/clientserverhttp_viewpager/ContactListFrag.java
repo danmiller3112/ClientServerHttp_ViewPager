@@ -78,7 +78,11 @@ public class ContactListFrag extends Fragment implements ContactAdapter.ViewClic
 
         SharedPreferences sharedPreferences = context.getSharedPreferences("AUTH", Context.MODE_PRIVATE);
         token = sharedPreferences.getString("TOKEN", "");
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         initAdapter();
         new ContactsAsyncTask().execute();
     }
