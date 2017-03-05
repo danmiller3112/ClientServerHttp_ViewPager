@@ -1,6 +1,7 @@
 package com.roll.clientserverhttp_viewpager;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.roll.clientserverhttp_viewpager.entities.User;
+import com.roll.clientserverhttp_viewpager.model.CallbackListener;
 import com.roll.clientserverhttp_viewpager.model.HttpProvider;
 
 import java.io.IOException;
@@ -40,6 +42,23 @@ public class ViewPageFrag extends Fragment {
     private MenuItem editItem, saveItem;
     private User user;
     private Context context;
+    private CallbackListener listener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        listener = (CallbackListener) activity;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof CallbackListener) {
+            listener = (CallbackListener) context;
+        } else {
+            throw new RuntimeException("Context must implements CallbackListener");
+        }
+    }
 
     public static ViewPageFrag newInstance(User user) {
         ViewPageFrag fragment = new ViewPageFrag();
@@ -107,6 +126,7 @@ public class ViewPageFrag extends Fragment {
                 emailView.setEnabled(true);
                 phoneView.setEnabled(true);
                 descView.setEnabled(true);
+                listener.sameAction("SCROLL_OFF");
                 break;
             case R.id.item_save:
                 phone = String.valueOf(phoneView.getText());
@@ -115,6 +135,10 @@ public class ViewPageFrag extends Fragment {
                 } else {
                     editItem.setVisible(true);
                     saveItem.setVisible(false);
+                    nameView.setEnabled(false);
+                    emailView.setEnabled(false);
+                    phoneView.setEnabled(false);
+                    descView.setEnabled(false);
                     name = String.valueOf(nameView.getText());
                     email = String.valueOf(emailView.getText());
                     desc = String.valueOf(descView.getText());
@@ -131,10 +155,6 @@ public class ViewPageFrag extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             progressView.setVisibility(View.VISIBLE);
-            nameView.setEnabled(false);
-            emailView.setEnabled(false);
-            phoneView.setEnabled(false);
-            descView.setEnabled(false);
         }
 
         @Override
@@ -158,7 +178,7 @@ public class ViewPageFrag extends Fragment {
             progressView.setVisibility(View.INVISIBLE);
             Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
             if ("Edit OK!".equals(s)) {
-//                listener.sameAction("SAVE_OK");
+                listener.sameAction("SCROLL_ON");
             }
         }
     }
