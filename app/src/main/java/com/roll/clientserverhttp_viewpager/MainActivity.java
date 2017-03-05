@@ -1,6 +1,7 @@
 package com.roll.clientserverhttp_viewpager;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -36,9 +37,13 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
                 transaction.replace(R.id.frag_container, new LoginFrag(), "LOGIN");
                 break;
             case "VIEW":
-                transaction.replace(R.id.frag_container, new ViewContactFrag(), "VIEW");
-                listState = false;
+                Intent intent = new Intent(MainActivity.this, PageActivity.class);
+                startActivity(intent);
                 break;
+//            case "VIEW":
+//                transaction.replace(R.id.frag_container, new ViewContactFrag(), "VIEW");
+//                listState = false;
+//                break;
             case "ADD":
                 transaction.replace(R.id.frag_container, new AddContactFrag(), "ADD");
                 listState = false;
