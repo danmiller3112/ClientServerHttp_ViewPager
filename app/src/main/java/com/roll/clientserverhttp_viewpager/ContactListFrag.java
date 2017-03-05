@@ -101,6 +101,7 @@ public class ContactListFrag extends Fragment implements ContactAdapter.ViewClic
         SharedPreferences sharedPreferences = context.getSharedPreferences("AUTH", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("USER", new Gson().toJson(user));
+        editor.putString("CONTACTS", new Gson().toJson(contacts));
         editor.commit();
         listener.sameAction("VIEW");
     }

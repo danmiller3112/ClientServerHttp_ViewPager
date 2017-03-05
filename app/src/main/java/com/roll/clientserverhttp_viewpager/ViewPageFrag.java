@@ -33,181 +33,133 @@ import java.util.Random;
 
 public class ViewPageFrag extends Fragment {
 
-    private String title;
+    private EditText nameView, emailView, phoneView, descView;
+    private ProgressBar progressView;
+    private String userJson, token;
+    private String name, email, phone, desc;
+    private MenuItem editItem, saveItem;
+    private User user;
+    private Context context;
 
-    public static ViewPageFrag newInstance(String title) {
+    public static ViewPageFrag newInstance(User user) {
         ViewPageFrag fragment = new ViewPageFrag();
         Bundle data = new Bundle();
-        data.putString("TITLE", title);
+        data.putString("USER", new Gson().toJson(user));
         fragment.setArguments(data);
         return fragment;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            title = getArguments().getString("TITLE", "Empty");
-        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.frag_viewpage, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.frag_viewpage, null);
+        return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        EditText titleTxt = (EditText) view.findViewById(R.id.view_name);
-        titleTxt.setText(title);
+        nameView = (EditText) view.findViewById(R.id.view_name);
+        emailView = (EditText) view.findViewById(R.id.view_email);
+        phoneView = (EditText) view.findViewById(R.id.view_phone);
+        descView = (EditText) view.findViewById(R.id.view_desc);
+        progressView = (ProgressBar) view.findViewById(R.id.progress_view);
+
+        context = getActivity().getApplicationContext();
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AUTH", Context.MODE_PRIVATE);
+        token = sharedPreferences.getString("TOKEN", "");
+//        userJson = sharedPreferences.getString("USER", "");
+        if (getArguments() != null){
+            userJson = getArguments().getString("USER", "");
+        }
+        Gson gson = new Gson();
+        user = gson.fromJson(userJson, User.class);
+
+        nameView.setText(user.getFullName());
+        emailView.setText(user.getEmail());
+        phoneView.setText(user.getPhoneNumber());
+        descView.setText(user.getDescription());
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_view, menu);
+        editItem = menu.findItem(R.id.item_edit);
+        saveItem = menu.findItem(R.id.item_save);
+        saveItem.setVisible(false);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-//    private EditText nameView, emailView, phoneView, descView;
-//    private ProgressBar progressView;
-//    private String userJson, token;
-//    private String name, email, phone, desc;
-//    private MenuItem editItem, saveItem;
-//    private User user;
-//    private Context context;
-//
-//    public static ViewPageFrag newInstance(String s) {
-//        ViewPageFrag fragment = new ViewPageFrag();
-//        Bundle data = new Bundle();
-//        data.putString("USER", s);
-//        fragment.setArguments(data);
-//        return fragment;
-//    }
-//
-////    @Override
-////    public void onAttach(Activity activity) {
-////        super.onAttach(activity);
-////        listener = (CallbackListener) activity;
-////    }
-////
-////    @Override
-////    public void onAttach(Context context) {
-////        super.onAttach(context);
-////        if (context instanceof CallbackListener) {
-////            listener = (CallbackListener) context;
-////        } else {
-////            throw new RuntimeException("Context must implements CallbackListener");
-////        }
-////    }
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        setHasOptionsMenu(true);
-//        super.onCreate(savedInstanceState);
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.frag_viewpage, null);
-//        return view;
-//    }
-//
-//    @Override
-//    public void onViewCreated(View view, Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        nameView = (EditText) view.findViewById(R.id.view_name);
-//        emailView = (EditText) view.findViewById(R.id.view_email);
-//        phoneView = (EditText) view.findViewById(R.id.view_phone);
-//        descView = (EditText) view.findViewById(R.id.view_desc);
-//        progressView = (ProgressBar) view.findViewById(R.id.progress_view);
-//
-//        context = getActivity().getApplicationContext();
-//
-//        SharedPreferences sharedPreferences = context.getSharedPreferences("AUTH", Context.MODE_PRIVATE);
-//        token = sharedPreferences.getString("TOKEN", "");
-////        userJson = sharedPreferences.getString("USER", "");
-//        if (getArguments() != null){
-//            userJson = getArguments().getString("USER", "");
-//        }
-//        Gson gson = new Gson();
-//        user = gson.fromJson(userJson, User.class);
-//
-//        nameView.setText(user.getFullName());
-//        emailView.setText(user.getEmail());
-//        phoneView.setText(user.getPhoneNumber());
-//        descView.setText(user.getDescription());
-//    }
-//
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_view, menu);
-//        editItem = menu.findItem(R.id.item_edit);
-//        saveItem = menu.findItem(R.id.item_save);
-//        saveItem.setVisible(false);
-//        super.onCreateOptionsMenu(menu, inflater);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.item_edit:
-//                editItem.setVisible(false);
-//                saveItem.setVisible(true);
-//                nameView.setEnabled(true);
-//                emailView.setEnabled(true);
-//                phoneView.setEnabled(true);
-//                descView.setEnabled(true);
-//                break;
-//            case R.id.item_save:
-//                phone = String.valueOf(phoneView.getText());
-//                if ("".equals(phone)) {
-//                    Toast.makeText(context, "Phone number is EMPTY!!!", Toast.LENGTH_LONG).show();
-//                } else {
-//                    editItem.setVisible(true);
-//                    saveItem.setVisible(false);
-//                    name = String.valueOf(nameView.getText());
-//                    email = String.valueOf(emailView.getText());
-//                    desc = String.valueOf(descView.getText());
-//                    new SaveAsynkTask().execute();
-//                }
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    class SaveAsynkTask extends AsyncTask<Void, Void, String> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            progressView.setVisibility(View.VISIBLE);
-//            nameView.setEnabled(false);
-//            emailView.setEnabled(false);
-//            phoneView.setEnabled(false);
-//            descView.setEnabled(false);
-//        }
-//
-//        @Override
-//        protected String doInBackground(Void... params) {
-//            String result = "Edit OK!";
-//            userJson = new Gson().toJson(new User(name, email, phone, desc, user.getContactId()));
-//            try {
-//                String jsonResponse = HttpProvider.getInstance().edit(token, userJson);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                result = "Connection ERROR!";
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return result;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String s) {
-//            super.onPostExecute(s);
-//            progressView.setVisibility(View.INVISIBLE);
-//            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-//            if ("Edit OK!".equals(s)) {
-////                listener.sameAction("SAVE_OK");
-//            }
-//        }
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_edit:
+                editItem.setVisible(false);
+                saveItem.setVisible(true);
+                nameView.setEnabled(true);
+                emailView.setEnabled(true);
+                phoneView.setEnabled(true);
+                descView.setEnabled(true);
+                break;
+            case R.id.item_save:
+                phone = String.valueOf(phoneView.getText());
+                if ("".equals(phone)) {
+                    Toast.makeText(context, "Phone number is EMPTY!!!", Toast.LENGTH_LONG).show();
+                } else {
+                    editItem.setVisible(true);
+                    saveItem.setVisible(false);
+                    name = String.valueOf(nameView.getText());
+                    email = String.valueOf(emailView.getText());
+                    desc = String.valueOf(descView.getText());
+                    new SaveAsynkTask().execute();
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    class SaveAsynkTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressView.setVisibility(View.VISIBLE);
+            nameView.setEnabled(false);
+            emailView.setEnabled(false);
+            phoneView.setEnabled(false);
+            descView.setEnabled(false);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = "Edit OK!";
+            userJson = new Gson().toJson(new User(name, email, phone, desc, user.getContactId()));
+            try {
+                String jsonResponse = HttpProvider.getInstance().edit(token, userJson);
+            } catch (IOException e) {
+                e.printStackTrace();
+                result = "Connection ERROR!";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressView.setVisibility(View.INVISIBLE);
+            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+            if ("Edit OK!".equals(s)) {
+//                listener.sameAction("SAVE_OK");
+            }
+        }
+    }
 }

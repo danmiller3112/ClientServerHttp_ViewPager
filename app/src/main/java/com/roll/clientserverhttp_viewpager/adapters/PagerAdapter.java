@@ -15,24 +15,19 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     private ViewPageFrag currentPage = null;
     private Contacts contacts;
-    private String[] names = {"Vasya", "Dan", "Kost", "Dub", "Ass", "Sveta", "Uri", "Bob", "Gay", "Leo"};
 
-    public PagerAdapter(FragmentManager fm){
+    public PagerAdapter(FragmentManager fm, Contacts contacts) {
         super(fm);
+        this.contacts = contacts;
     }
-
-//    public PagerAdapter(FragmentManager fm, Contacts contacts) {
-//        super(fm);
-//        this.contacts = contacts;
-//    }
 
     @Override
     public Fragment getItem(int position) {
-        return ViewPageFrag.newInstance(names[position]);
+        return ViewPageFrag.newInstance(contacts.getContacts().get(position));
     }
 
     @Override
     public int getCount() {
-        return names.length;
+        return contacts.getContacts().size();
     }
 }
